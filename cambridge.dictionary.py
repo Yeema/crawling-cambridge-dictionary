@@ -144,5 +144,9 @@ semanticDict = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defau
 if __name__ == '__main__':
     urls = eval(open('extendURLs.txt').read())
 
-    for r in urls:
-        start_html(url,r.split('/')[-1])
+    for r in urls[:10]:
+        start_html(r,r.split('/')[-1])
+        
+    import json
+    with open('cambridge.dictionary.json','w') as fd:
+        json.dump(semanticDict,fd)
