@@ -3,7 +3,7 @@
   
   1. used to capture all urls in https://dictionary.cambridge.org/browse/english-chinese-traditional/
   2. got guideurls by appending https://dictionary.cambridge.org/browse/english-chinese-traditional/ from a to z
-  3. got extendurls by capture urls from each guideurls
+  3. got extendurls by capturing urls from each guideurls
   
 <h2>cambridge.dictionary.py</h2>
   
