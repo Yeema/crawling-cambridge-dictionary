@@ -8,6 +8,6 @@
   
 <h2>cambridge.dictionary.py</h2>
   
-  1. python cambridge.dictionary.py
+  1. cmd: python cambridge.dictionary.py
   2. crawled all pages in cambridge dictionary
   3. accese extendurls and preprocessed html
