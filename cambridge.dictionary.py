@@ -11,7 +11,8 @@ eng_set = set('a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z'.split(','))
 
 semanticDict = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(list)))))
 
-def start(url,head): 
+def start(url,head):
+
     headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0' }
     
     source_code = requests.get(url , headers=headers).text 
@@ -29,26 +30,29 @@ def build_dict(head,string,skip = 0,semantic_tag = "NONE",definition = "NONE",ou
     output_part = ""
     part_str = "NONE"
     ex_id = 0
+    print('------->', head)
 #     print(string)
-    for id , s in enumerate(string):
+    for idx , s in enumerate(string):
         cond = s.split()[0]
 
-        if semantic_tag != "NONE" and skip >0 and definition == "NONE":
+        if semantic_tag != "NONE" and skip > 0 and definition == "NONE":
             skip -= 1
             continue
 
         if skip>0:
             definition.append(s)
-            ex_id = id+1
+            ex_id = idx+1
             if output_part:
                 semanticDict[head]['def'][semantic_tag][output_part][part_str].append(definition)
             else:
                 semanticDict[head]['def'][semantic_tag]['NONE'][part_str].append(definition)
             skip -= 1
+            print('^^^^^', output_part, '||', semantic_tag, '||', part_str)
             continue
             
-        if cond==head and id+1 < len(string):
+        if cond == head and idx+1 < len(string):
             special = True
+            print(s)
             if s.split()[1].strip() in parts_map:
                 output_part = parts_map[s.split()[1].strip()]
             elif not output_part:
@@ -57,13 +61,14 @@ def build_dict(head,string,skip = 0,semantic_tag = "NONE",definition = "NONE",ou
                 part_str = regex.search(s).group(1).strip()
             else:
                 part_str = "NONE"
-            if brace_gx.search(string[id+1]):
-                semantic_tag = brace_gx.search(string[id+1]).group(1).strip()
+            if brace_gx.search(string[idx+1]):
+                semantic_tag = brace_gx.search(string[idx+1]).group(1).strip()
                 skip = 1
             else:
                 semantic_tag = s
             continue
         if brace_gx.search(s):  
+            print(semantic_tag)
             semantic_tag = brace_gx.search(s).group(1).strip()    
             if semantic_tag.split()[0].isupper():
                 continue
@@ -84,12 +89,13 @@ def build_dict(head,string,skip = 0,semantic_tag = "NONE",definition = "NONE",ou
             else:
                 definition = [s.strip()]
             skip = 1
+            print('def:', definition)
         else:
-            if id ==0:
+            if idx == 0:
                 semantic_tag = s
                 print(s)
             else:
-                if (id-ex_id)%2==0:
+                if (idx-ex_id)%2==0:
                     if s.split()[-1][0].lower() in eng_set:
                         example = [s]
                 else:
@@ -100,6 +106,9 @@ def build_dict(head,string,skip = 0,semantic_tag = "NONE",definition = "NONE",ou
                         else:
                             semanticDict[head]['example'] = []
                             semanticDict[head]['example'].append(example)
+                            #semanticDict[head][]
+                print(example)
+                
     return semanticDict
 
 def clean_sent(sents,head):
@@ -118,9 +127,13 @@ def clean_sent(sents,head):
 
 if __name__ == '__main__':
     urls = eval(open('extendURLs.txt').read())
-    for r in urls:
+    for r in urls[:1]:
+        print(r)
         start(r,r.split('/')[-1])
         
     import json
-    with open('cambridge.dictionary.json','w') as fd:
-        json.dump(semanticDict,fd)
+    #for line in semanticDict.items():
+    #    print(line)
+    #print(semanticDict)
+    #with open('cambridge.dictionary.json','w') as fd:
+        #json.dump(semanticDict,fd)
